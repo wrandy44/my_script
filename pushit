@@ -1,0 +1,18 @@
+#!/bin/sh
+## pushit.sh for azd in /home/debrau_c/bin
+## 
+## Made by Carl DEBRAUWERE
+## Login   <debrau_c@epitech.net>
+## 
+## Started on  Tue Jan  3 16:05:25 2017 Carl DEBRAUWERE
+## Last update Tue Jan  3 16:07:37 2017 Carl DEBRAUWERE
+##
+
+git add --all
+if [ -z $1 ]; then
+    git commit -am "ok"
+else
+    git commit -am $1
+fi
+
+git push origin master
