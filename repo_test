@@ -1,0 +1,32 @@
+#!/bin/bash
+## repo_test.sh for azd in /home/debrau_c
+## 
+## Made by debrau_c
+## Login   <debrau_c@epitech.net>
+## 
+## Started on  Sat Apr 30 15:03:54 2016 debrau_c
+## Last update Mon May 23 15:21:33 2016 debrau_c
+##
+
+echo -e "/*******************/\n/* test Makefile : */"
+echo "/*******************/"
+make fclean
+make
+make
+make
+make
+make clean
+make fclean
+echo "****************"
+echo "norme .c :"
+python3 ~/bin/moulti `find -name "*.c"`
+echo "norme .h :"
+python3 ~/bin/moulti `find -name "*.h"`
+echo "printf list :"
+grep --color printf `find -name "*.c" -or -name "*.h"`
+echo "stdio :"
+grep --color stdio `find -name "*.c" -or -name "*.h"`
+echo "malloc list :"
+grep --color malloc `find -name "*.c" -or -name "*.h"`
+echo "mr_clean :"
+find . -name "#*#" -delete -or -name "*~" -delete
