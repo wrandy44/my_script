@@ -5,14 +5,16 @@
 ## Login   <debrau_c@epitech.net>
 ## 
 ## Started on  Tue Jan  3 16:05:25 2017 Carl DEBRAUWERE
-## Last update Wed Mar  1 23:03:39 2017 debrau_c
+## Last update Fri Mar  3 23:34:36 2017 debrau_c
 ##
-
-make re &> /dev/null
-if [ $? -ne 0 ];then
-    echo "Project doesn't compile !! Little noob."
-    exit
+if [ -e Makefile ];then
+    make re &> /dev/null
+    if [ $? -ne 0 ];then
+	echo "Project doesn't compile !! Little noob."
+	exit
+    fi
 fi
+
 make fclean &> /dev/null
 ${HOME}/bin/mr_clean
 git add --all
