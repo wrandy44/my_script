@@ -5,11 +5,11 @@
 ## Login   <debrau_c@epitech.net>
 ## 
 ## Started on  Mon Feb  1 09:58:36 2016 debrau_c
-## Last update Tue Feb 21 18:32:55 2017 debrau_c
+## Last update Thu Mar 23 23:42:40 2017 debrau_c
 ##
-me=carl.debrauwere@epitech.eu
+me=$MAIL
 repo=debrau_c
-blih -u $me repository create "$1"
-blih -u $me repository setacl "$1" ramassage-tek r
+blih -u $me -t $BLIH_TOKEN repository create "$1"
+blih -u $me -t $BLIH_TOKEN repository setacl "$1" ramassage-tek r
 git clone git@git.epitech.eu:/$repo/"$1"
-blih -u $me repository getacl "$1"
+blih -u $me -t $BLIH_TOKEN repository getacl "$1"
