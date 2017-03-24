@@ -1,0 +1,11 @@
+#!/bin/sh
+## getright.sh for azd in /home/debrau_c/bin
+## 
+## Made by debrau_c
+## Login   <carl.debrauwere@epitech.eu>
+## 
+## Started on  Thu Mar 23 23:38:29 2017 debrau_c
+## Last update Thu Mar 23 23:45:32 2017 debrau_c
+##
+
+blih -u $MAIL -t $BLIH_TOKEN repository setacl ${PWD##*/} "$@"
