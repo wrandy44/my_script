@@ -138,6 +138,7 @@ get_class_name(){
 	    let "on=0"
 	fi
     done
+    echo ${opts[*]}
 }
 
 get_namespace(){
@@ -217,14 +218,17 @@ get_inc_perso(){
 	fi
     done
     echo ${opts[*]}
+    
 }
 
 declare namespace heritage i inc_sys inc_perso class_names fileName extHPP extCPP
 
 if [ "$#" == "0" ];then
-  usage
-  exit
+    usage
+    exit 0
 fi
+
+
 get_namespace $@
 heritage=$(get_heritage $@)
 inc_sys=$(get_inc_sys $@)
@@ -233,6 +237,7 @@ class_names=$(get_class_name $@)
 
 fileName="${class_names[0]}.hpp"
 rm -rf $fileName
+echo "la"
 ## Write .hpp
 print_header $fileName
 print_start_preprocess $fileName ${class_names[0]}
@@ -251,7 +256,7 @@ print_end_preprocess $fileName ${class_names[0]}
 
 ## Write .cpp
 fileName="${class_names[0]}.cpp"
-rm $fileName
+rm -rf $fileName
 nbIndent=0
 print_header $fileName
 print_inc_sys $inc_sys
@@ -260,4 +265,5 @@ echo >> $fileName
 open_namespace
 fill_method ${class_names[0]}
 close_namespace
+echo "COUCOU";
 exit 0
