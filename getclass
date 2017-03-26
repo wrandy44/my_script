@@ -1,120 +1,263 @@
 #!/bin/bash
-## getclass.sh for azd in /home/debrau_c/bin
-## 
-## Made by Carl DEBRAUWERE
-## Login   <debrau_c@epitech.net>
-## 
-## Started on  Mon Jan 16 09:33:45 2017 Carl DEBRAUWERE
-## Last update Mon Feb 27 13:05:04 2017 debrau_c
-##
-##
-##
-##  Creer une classe en cpp avec le header
-##
-
 
 usage(){
-    echo -e "Usage : $1 Class1 Class2 [-options] arg1 arg2
-\t-i : personnal include
-\t-I : system include"
-    }
-epitech_head(){
-	echo "/*
-** $1 for azd in /home/debrau_c/bin
-** Made by Carl DEBRAUWERE
-** Login   <debrau_c@epitech.net>
-** 
-** Started on  Mon Jan 16 09:33:45 2017 Carl DEBRAUWERE
-** Last update Mon Jan 16 09:33:45 2017 Carl DEBRAUWERE
-*/" >> $1
+  echo "Usage : Class1 Class2 -[a-Z] opt1 opt2 -[a-z] opt3 opt4"
+  echo -e "\t-n:\tNamespaces"
+  echo -e "\t-I:\tSystem include"
+  echo -e "\t-i:\tPersonnal include"
+  echo -e "\t-h:\tHeritance"
+
+}
+fill_method(){
+  local i
+  for i in `seq 1 $nbIndent`; do echo -n "  " >> $fileName; done
+  echo "$1::$1(){}" >> $fileName
+  for i in `seq 1 $nbIndent`; do echo -n "  ">> $fileName; done
+  echo "$1::$1(const $1 &obj){}" >> $fileName
+  for i in `seq 1 $nbIndent`; do echo -n "  ">> $fileName; done
+  echo "$1 &operator=(const $1 &obj){}" >> $fileName
+  for i in `seq 1 $nbIndent`; do echo -n "  ">> $fileName; done
+  echo "$1::~$1(){}" >> $fileName
+}
+basic_method(){
+  local i
+
+  for i in `seq 1 $nbIndent`; do echo -n "  ">> $fileName; done
+  echo " public:" >> $fileName
+
+  for i in `seq 0 $nbIndent`; do echo -n "  ">> $fileName; done
+  echo "$1();" >> $fileName
+  for i in `seq 0 $nbIndent`; do echo -n "  ">> $fileName; done
+  echo -e "$1(const $1 &obj);" >> $fileName
+  for i in `seq 0 $nbIndent`; do echo -n "  ">> $fileName; done
+  echo -e "$1\t&operator=(const $1 &obj);" >> $fileName
+  for i in `seq 0 $nbIndent`; do echo -n "  ">> $fileName; done
+  echo "~$1();" >> $fileName
+}
+print_start_class(){
+  local i
+  for i in `seq 1 $nbIndent`;do
+    echo -n "  " >> $fileName
+  done
+  echo -n "class $1" >> $fileName
 }
 
-##Gestion des include
+print_end_class(){
+  local i
+  for i in `seq 1 $nbIndent`; do echo -n "  ">> $fileName; done
+  echo "}" >> $fileName
+}
 
-starti=0
-startI=0
-j=0
-for i in "$@";do
-    if [ "${i:0:1}" == "-" ];then
-	let "startI=0"
-	let "starti=0"
+print_heritance(){
+  local first=0
+  local i
+  for i in $@;do
+    if [ "$first" == "1" ];then
+      echo -n ", " >> $fileName
+    else
+      echo -n " : public " >> $fileName
     fi
-    if [ $starti -eq 1 ];then
-	includei["$j"]=$i
-	let "j=$j+1"
-    fi
-    if [ $startI -eq 1 ];then
-	includeI["$j"]=$i
-	let "j=$j+1"
-    fi
-    if [ ${i:0:1} == "-" ];then
-	let "startI=0"
-	let "starti=0"
-	j=0
-	if [ ${i:1:2} == "i" ];then
-	    let "starti=1"
-	elif [ ${i:1:2} == "I" ];then
-	    let "startI=1"
+    echo -n "$i" >> $fileName
+  done
+  echo "{" >> $fileName
+}
+
+print_inc_sys(){
+  for i in $@; do
+    echo "#include <$i>" >> $fileName
+  done
+}
+
+print_inc_perso(){
+  for i in $@; do
+    echo "#include \"$i.hpp\"" >> $fileName
+  done
+}
+
+print_header(){
+    echo "/*" >> $1
+    echo "**" >> $1
+    echo "**" >> $1
+    echo "**" >> $1
+    echo "**" >> $1
+    echo "**" >> $1
+    echo "*/" >> $1
+}
+
+print_start_preprocess(){
+    local fileName=$1
+    local classUpper=$(echo "$2" | awk '{print toupper($0)}')
+
+    echo -n "#ifndef __" >> $fileName
+    echo -n $classUpper >> $fileName
+    echo "__HPP_" >> $fileName
+    echo -n "# define __" >> $fileName
+    echo -n $classUpper >> $fileName
+    echo "__HPP_" >> $fileName
+}
+
+print_end_preprocess(){
+    local fileName=$1
+    local class=$2
+
+    echo -n "#endif /* !" >> $fileName
+    echo -n $class >> $fileName
+    echo "*/">> $fileName
+}
+
+open_namespace(){
+    local i
+    for i in ${namespace[*]}; do
+      for j in `seq 1 $nbIndent`;do echo -n "  " >> $fileName;done
+      echo "namespace $i{" >> $fileName
+      let "nbIndent=$nbIndent+1"
+    done
+}
+
+close_namespace(){
+    local i
+    let "nbIndent=$nbIndent-1"
+    for ((i=${#namespace[@]}-1; i>=0; i--)); do
+      for j in `seq 1 $nbIndent`;do echo -n "  " >> $fileName;done
+      echo "}// !${namespace[$i]}" >> $fileName
+      let "nbIndent=$nbIndent-1"
+    done
+}
+
+get_class_name(){
+    local -a opts=()
+    declare on
+    declare j
+    j=0
+    on=1
+    for opt in $@; do
+	if [ "$on" == "1" ] && [ "${opt:0:1}" != '-' ];then
+	    opts[$j]=$opt
+	    let "j=$j+1"
+	elif [ "${opt:0:1}" == '-' ];then
+	    let "on=0"
 	fi
-    fi
-done
-i=0
-
-put_include(){
-    x=$($1)
-    file=$2
-    opt=$3
-    if [ $opt -eq 0 ]; then
-	for s in "${x[@]}";do
-	    echo "#include \"$s.hh\"" >> $file
-	done
-    else
-	for s in "${x[@]}";do
-	    echo "#include <$s>" >> $file
-	done
-    fi
+    done
 }
 
-if [ "$#" -lt 1 ];then
-    usage $0
-    exit 1
+get_namespace(){
+    declare on
+    declare j
+    j=0
+    on=0
+    for opt in $@; do
+	if [ "$on" == "1" ] && [ "${opt:0:1}" != '-' ];then
+	    namespace[$j]=$opt
+	    let "j=$j+1"
+	fi
+	if [ "${opt:0:2}" == '-n' ] || [ "${opt:0:2}" == '-N' ];then
+	    let "on=1"
+	elif [ "${opt:0:1}" == '-' ];then
+	    let "on=0"
+	fi
+    done
+    echo ${opts[*]}
+}
+
+get_heritage(){
+    local -a opts=()
+    declare on
+    declare j
+    j=0
+    on=0
+    for opt in $@; do
+	if [ "$on" == "1" ] && [ "${opt:0:1}" != '-' ];then
+	    opts[$j]=$opt
+	    let "j=$j+1"
+	fi
+	if [ "${opt:0:2}" == '-h' ] || [ "${opt:0:2}" == '-H' ];then
+	    let "on=1"
+	elif [ "${opt:0:1}" == '-' ];then
+	    let "on=0"
+	fi
+    done
+    echo ${opts[*]}
+}
+
+get_inc_sys(){
+    local -a opts=()
+    declare on
+    declare j
+    j=0
+    on=0
+    for opt in $@; do
+	if [ "$on" == "1" ] && [ "${opt:0:1}" != '-' ];then
+	    opts[$j]=$opt
+	    let "j=$j+1"
+	fi
+	if [ "${opt:0:2}" == '-I' ];then
+	    let "on=1"
+	elif [ "${opt:0:1}" == '-' ];then
+	    let "on=0"
+	fi
+    done
+    echo ${opts[*]}
+}
+
+get_inc_perso(){
+    local -a opts=()
+    declare on
+    declare j
+    j=0
+    on=0
+    for opt in $@; do
+	if [ "$on" == "1" ] && [ "${opt:0:1}" != '-' ];then
+	    opts[$j]=$opt
+	    let "j=$j+1"
+	fi
+	if [ "${opt:0:2}" == '-i' ];then
+	    let "on=1"
+	elif [ "${opt:0:1}" == '-' ];then
+	    let "on=0"
+	fi
+    done
+    echo ${opts[*]}
+}
+
+declare namespace heritage i inc_sys inc_perso class_names fileName extHPP extCPP
+
+if [ "$#" == "0" ];then
+  usage
+  exit
 fi
+get_namespace $@
+heritage=$(get_heritage $@)
+inc_sys=$(get_inc_sys $@)
+inc_perso=$(get_inc_perso $@)
+class_names=$(get_class_name $@)
 
-for i in "$@";do
-    if [ -z $i ];then
-	0 = 0;
-    elif [ ${i:0:1} == "-" ];then
-	exit 0
-    else
-	header=$i".hh"
-	source=$i".cpp"
-	epitech_head $header;
-	echo>> $header
-	echo -n "#ifndef _">> $header
-	echo $i"_H_"| tr '[:lower:]' '[:upper:]' >> $header
-	echo -n "# define _">>  $i".hh"
-	echo $i"_H_"| tr '[:lower:]' '[:upper:]'>> $header
-	echo >> $header;
-	put_include "${includeI[*]}" $header 1
-	put_include "${includei[*]}" $header 0
-	echo >> $header
-	echo "class $i{">> $header
-	echo "public:">> $header
-	echo -e "  $i();" >> $header
-	echo -e "  ~$i();" >> $header
-	echo "};" >> $header
-	echo >> $header;
-	echo "#endif /* $i */" >> $header
-	epitech_head $source;
-	echo >> $source;
-	echo "#include \"$header\"" >> $source
+fileName="${class_names[0]}.hpp"
+rm -rf $fileName
+## Write .hpp
+print_header $fileName
+print_start_preprocess $fileName ${class_names[0]}
+echo >> $fileName
+print_inc_sys $inc_sys
+print_inc_perso $inc_perso
+echo >> $fileName
+nbIndent=0
+open_namespace
+print_start_class ${class_names[0]}
+print_heritance ${heritage[*]}
+basic_method ${class_names[0]}
+print_end_class
+close_namespace
+print_end_preprocess $fileName ${class_names[0]}
 
-	echo >> $source;
-	echo "$i::$i(){
-
-}" >> $source;
-	echo "$i::~$i(){
-
-}" >> $source;
-    fi
-done
+## Write .cpp
+fileName="${class_names[0]}.cpp"
+rm $fileName
+nbIndent=0
+print_header $fileName
+print_inc_sys $inc_sys
+print_inc_perso $inc_perso
+echo >> $fileName
+open_namespace
+fill_method ${class_names[0]}
+close_namespace
+exit 0

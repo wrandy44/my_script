@@ -1,0 +1,131 @@
+#!/bin/bash
+
+get_class_name(){
+    local -a opts=()
+    declare on
+    declare j
+    j=0
+    on=1
+    for opt in $@; do
+	if [ "$on" == "1" ] && [ "${opt:0:1}" != '-' ];then
+	    opts[$j]=$opt
+	    let "j=$j+1"
+	elif [ "${opt:0:1}" == '-' ];then
+	    let "on=0"
+	fi
+    done
+    echo ${opts[*]}
+}
+
+get_namespace(){
+    local -a opts=()
+    declare on
+    declare j
+    j=0
+    on=0
+    for opt in $@; do
+	if [ "$on" == "1" ] && [ "${opt:0:1}" != '-' ];then
+	    opts[$j]=$opt
+	    let "j=$j+1"
+	fi
+	if [ "${opt:0:2}" == '-n' ] || [ "${opt:0:2}" == '-N' ];then
+	    let "on=1"
+	elif [ "${opt:0:1}" == '-' ];then
+	    let "on=0"
+	fi
+    done
+    echo ${opts[*]}
+}
+
+get_heritage(){
+    local -a opts=()
+    declare on
+    declare j
+    j=0
+    on=0
+    for opt in $@; do
+	if [ "$on" == "1" ] && [ "${opt:0:1}" != '-' ];then
+	    opts[$j]=$opt
+	    let "j=$j+1"
+	fi
+	if [ "${opt:0:2}" == '-h' ] || [ "${opt:0:2}" == '-H' ];then
+	    let "on=1"
+	elif [ "${opt:0:1}" == '-' ];then
+	    let "on=0"
+	fi
+    done
+    echo ${opts[*]}
+}
+
+get_inc_sys(){
+    local -a opts=()
+    declare on
+    declare j
+    j=0
+    on=0
+    for opt in $@; do
+	if [ "$on" == "1" ] && [ "${opt:0:1}" != '-' ];then
+	    opts[$j]=$opt
+	    let "j=$j+1"
+	fi
+	if [ "${opt:0:2}" == '-I' ];then
+	    let "on=1"
+	elif [ "${opt:0:1}" == '-' ];then
+	    let "on=0"
+	fi
+    done
+    echo ${opts[*]}
+}
+
+get_inc_perso(){
+    local -a opts=()
+    declare on
+    declare j
+    j=0
+    on=0
+    for opt in $@; do
+	if [ "$on" == "1" ] && [ "${opt:0:1}" != '-' ];then
+	    opts[$j]=$opt
+	    let "j=$j+1"
+	fi
+	if [ "${opt:0:2}" == '-i' ];then
+	    let "on=1"
+	elif [ "${opt:0:1}" == '-' ];then
+	    let "on=0"
+	fi
+    done
+    echo ${opts[*]}
+}
+
+declare namespace heritage i inc_sys inc_perso
+
+namespace=$(get_namespace $@)
+heritage=$(get_heritage $@)
+inc_sys=$(get_inc_sys $@)
+inc_perso=$(get_inc_perso $@)
+class_names=$(get_class_name $@)
+
+echo "Namespace :"
+for i in $namespace; do
+    echo $i
+done
+
+echo "Heritage :"
+for i in $heritage; do
+    echo $i
+done
+
+echo "Include Sys"
+for i in $inc_sys; do
+    echo $i
+done
+
+echo "Include Perso"
+for i in $inc_perso; do
+    echo $i
+done
+
+echo "Classes"
+for i in $class_names; do
+    echo $i
+done
