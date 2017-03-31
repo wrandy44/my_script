@@ -1,0 +1,11 @@
+#!/bin/sh
+## try.sh for za in /home/debrau_c/bin
+## 
+## Made by debrau_c
+## Login   <carl.debrauwere@epitech.eu>
+## 
+## Started on  Sat Mar 25 16:25:31 2017 debrau_c
+## Last update Sat Mar 25 16:26:04 2017 debrau_c
+##
+
+cp -r ~/bin/repo_c/* .

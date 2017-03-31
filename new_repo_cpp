@@ -1,0 +1,11 @@
+#!/bin/bash
+## new_repo_cpp.sh for azd in /home/debrau_c/bin
+## 
+## Made by debrau_c
+## Login   <carl.debrauwere@epitech.eu>
+## 
+## Started on  Mon Mar 27 20:14:21 2017 debrau_c
+## Last update Mon Mar 27 20:17:00 2017 debrau_c
+##
+
+cp -r ~/bin/repo_cpp/* .

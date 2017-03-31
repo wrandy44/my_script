@@ -1,0 +1,11 @@
+#!/bin/bash
+## set_curr_dir.sh for azd in /home/debrau_c/bin
+## 
+## Made by debrau_c
+## Login   <carl.debrauwere@epitech.eu>
+## 
+## Started on  Tue Mar 28 10:42:38 2017 debrau_c
+## Last update Tue Mar 28 10:45:28 2017 debrau_c
+##
+
+echo "export CUR_DIR=`pwd`" >> $HOME/.zshrc

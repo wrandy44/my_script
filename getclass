@@ -15,7 +15,7 @@ fill_method(){
   for i in `seq 1 $nbIndent`; do echo -n "  ">> $fileName; done
   echo "$1::$1(const $1 &obj){}" >> $fileName
   for i in `seq 1 $nbIndent`; do echo -n "  ">> $fileName; done
-  echo "$1 &operator=(const $1 &obj){}" >> $fileName
+  echo "$1 &$1::operator=(const $1 &obj){ return *this; }" >> $fileName
   for i in `seq 1 $nbIndent`; do echo -n "  ">> $fileName; done
   echo "$1::~$1(){}" >> $fileName
 }
@@ -45,7 +45,7 @@ print_start_class(){
 print_end_class(){
   local i
   for i in `seq 1 $nbIndent`; do echo -n "  ">> $fileName; done
-  echo "}" >> $fileName
+  echo "};" >> $fileName
 }
 
 print_heritance(){
@@ -235,7 +235,7 @@ inc_sys=$(get_inc_sys $@)
 inc_perso=$(get_inc_perso $@)
 class_names=$(get_class_name $@)
 
-fileName="${class_names[0]}.hpp"
+fileName="${class_names[0]}.hh"
 rm -rf $fileName
 echo "la"
 ## Write .hpp
@@ -260,7 +260,7 @@ rm -rf $fileName
 nbIndent=0
 print_header $fileName
 print_inc_sys $inc_sys
-print_inc_perso $inc_perso
+echo "#include \"${class_names[0]}.hh\"" >> $fileName
 echo >> $fileName
 open_namespace
 fill_method ${class_names[0]}
