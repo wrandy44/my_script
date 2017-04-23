@@ -3,7 +3,7 @@ Ces scripts pourront vous aider lors de vos années a epitech, ou simplement pou
 
 creadir : Permet de creer un dossier sur blih, ajoute les droits a ramasse-tek, le clone dans le dossir courrant
 
-getclass : Creer un classe en CPP, avec Heritage, Namespace, include, copy constructor, operator=
+getclass : Creer un classe en CPP, avec Heritage, Namespace, include, copy constructor, operator=, recuperation des fonctions virtuelles pure dans l'interface, push les classe dans les dossier "inc" et "src"
 
 getright / setright : Affiche / Donne les droits du dossier blih courant
 
