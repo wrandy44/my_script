@@ -1,17 +1,12 @@
 #!/bin/bash
 
-indent(){
-  echo $nbIndent
-  for z in `seq $1 $nbIndent`; do echo "LALALA"; echo -n "  ">> $2; done
-}
-
 usage(){
   echo "Usage : Class1 Class2 -[a-Z] opt1 opt2 -[a-z] opt3 opt4"
   echo -e "\t-n:\tNamespaces"
   echo -e "\t-I:\tSystem include"
   echo -e "\t-i:\tPersonnal include"
   echo -e "\t-h:\tHeritance"
-  echo -e "\t-inter:\tRecup all pure function in Interface"
+
 }
 fill_method(){
   local i
@@ -39,25 +34,6 @@ basic_method(){
   for i in `seq 0 $nbIndent`; do echo -n "  ">> $fileName; done
   echo "~$1();" >> $fileName
 }
-
-interface_method(){
-  declare i
-  declare patt patt2
-  patt2="[a-zA-Z0-9]"
-  patt="virtual*([a-zA-Z0-9 ])*=*0*"
-  for i in $@;do #Name of files
-    while IFS='' read -r line || [[ -n "$line" ]]; do
-      #echo "$line"
-      if [[ "$line" =~  $patt ]];then
-        line=$(echo "${line//virtual /}")
-        line=$(echo "${line//=*0/}")
-        line=$(echo "${line/ ;/;}")
-        echo "$line" >> $fileName
-      fi
-    done < "$i"
-  done
-}
-
 print_start_class(){
   local i
   for i in `seq 1 $nbIndent`;do
@@ -88,13 +64,13 @@ print_heritance(){
 
 print_inc_sys(){
   for i in $@; do
-    echo -e "\#include <$i>" >> $fileName
+    echo "#include <$i>" >> $fileName
   done
 }
 
 print_inc_perso(){
   for i in $@; do
-    echo "#include \"$i.hh\"" >> $fileName
+    echo "#include \"$i.hpp\"" >> $fileName
   done
 }
 
@@ -114,10 +90,10 @@ print_start_preprocess(){
 
     echo -n "#ifndef __" >> $fileName
     echo -n $classUpper >> $fileName
-    echo "__HH_" >> $fileName
+    echo "__HPP_" >> $fileName
     echo -n "# define __" >> $fileName
     echo -n $classUpper >> $fileName
-    echo "__HH_" >> $fileName
+    echo "__HPP_" >> $fileName
 }
 
 print_end_preprocess(){
@@ -242,26 +218,10 @@ get_inc_perso(){
 	fi
     done
     echo ${opts[*]}
-
+    
 }
 
-get_interface(){
-  declare on i
-  on=0
-  i=0
-  for opt in $@; do
-    if [ "$on" == "1" ];then
-        interface[$i]="$opt"
-    fi
-    if [ "$opt" == "-inter" ];then
-      let "on=1";
-    elif [ "${opt:0:1}" == '-' ];then
-      let "on=0"
-    fi
-  done
-}
-
-declare namespace heritage i inc_sys inc_perso class_names fileName exthh extCPP
+declare namespace heritage i inc_sys inc_perso class_names fileName extHPP extCPP
 
 if [ "$#" == "0" ];then
     usage
@@ -274,11 +234,11 @@ heritage=$(get_heritage $@)
 inc_sys=$(get_inc_sys $@)
 inc_perso=$(get_inc_perso $@)
 class_names=$(get_class_name $@)
-get_interface $@
 
 fileName="${class_names[0]}.hh"
 rm -rf $fileName
-## Write .hh
+echo "la"
+## Write .hpp
 print_header $fileName
 print_start_preprocess $fileName ${class_names[0]}
 echo >> $fileName
@@ -286,14 +246,13 @@ print_inc_sys $inc_sys
 print_inc_perso $inc_perso
 echo >> $fileName
 nbIndent=0
-open_namespace                            # write all namespae : namespace n1{\n namespace n2{\n
-print_start_class ${class_names[0]}       # write "class Name"
-print_heritance ${heritage[*]}            # write ": public h1, public h2"
-basic_method ${class_names[0]}            # Write Ctor, Dtor, operator=, copy constructor
-interface_method ${interface[*]}
-print_end_class                           # Close brackets
-close_namespace                           # Close brackets AGAIN
-print_end_preprocess $fileName ${class_names[0]} # endif
+open_namespace
+print_start_class ${class_names[0]}
+print_heritance ${heritage[*]}
+basic_method ${class_names[0]}
+print_end_class
+close_namespace
+print_end_preprocess $fileName ${class_names[0]}
 
 ## Write .cpp
 fileName="${class_names[0]}.cpp"
@@ -305,16 +264,6 @@ echo "#include \"${class_names[0]}.hh\"" >> $fileName
 echo >> $fileName
 open_namespace
 fill_method ${class_names[0]}
-interface_method ${interface[*]}
 close_namespace
-
-if [ -d inc/ ]; then
-    mv ${class_names[0]}.hh inc
-fi
-if [ -d src ]; then
-    mv ${class_names[0]}.cpp src
-fi
-
-
+echo "COUCOU";
 exit 0
-

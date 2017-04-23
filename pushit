@@ -5,7 +5,7 @@
 ## Login   <debrau_c@epitech.net>
 ## 
 ## Started on  Tue Jan  3 16:05:25 2017 Carl DEBRAUWERE
-## Last update Fri Mar  3 23:34:36 2017 debrau_c
+## Last update Sat Apr  8 00:57:56 2017 debrau_c
 ##
 if [ -e Makefile ];then
     make re &> /dev/null
@@ -18,9 +18,9 @@ fi
 make fclean &> /dev/null
 ${HOME}/bin/mr_clean
 git add --all
-if [ -z $1 ]; then
+if [ $@ -e 1 ]; then
     git commit -am "default message from'$0'-script"
 else
-    git commit -am $1
+    git commit -am $@
 fi
 git push origin master
