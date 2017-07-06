@@ -5,12 +5,12 @@
 ## Login   <debrau_c@epitech.net>
 ## 
 ## Started on  Mon May  2 11:14:22 2016 debrau_c
-## Last update Mon May  2 11:18:32 2016 debrau_c
+## Last update Fri May  5 01:22:48 2017 debrau_c
 ##
 
 CC = g++
 
-SRC	= srcs/main.cpp	\
+SRC	= src/main.cpp	\
 
 CXXFLAGS	= -Iinc/ -Wall
 

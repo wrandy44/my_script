@@ -1,0 +1,38 @@
+#!/bin/bash
+## todo.sh for azad in /home/debrau_c/bin/my_script/tests
+## 
+## Made by debrau_c
+## Login   <carl.debrauwere@epitech.eu>
+## 
+## Started on  Sun Jun  4 02:48:40 2017 debrau_c
+## Last update Sun Jun  4 03:08:28 2017 debrau_c
+##
+
+usage(){
+    echo "$1 [options] [data]"
+    echo -e "\t -t : add title"
+    echo -e "\t -u : urgent symbole"
+    echo -e "\t -v : view TODO file"
+}
+
+if [ "$#" == "0" ];then
+    usage $0
+    exit 0
+fi
+
+if [ "$1" == "-t" ];then
+    echo "- ${@:2}:" >> TODO
+    exit 0
+fi
+
+if [ "$1" == "-u" ];then
+    echo -e "\t[ ] / ! \ ${@:2}" >> TODO
+    exit 0
+fi
+
+if [ "$1" == "-v" ];then
+    cat TODO
+    exit 0
+fi
+
+echo -e "\t[ ] $@" >> TODO

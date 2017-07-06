@@ -99,13 +99,14 @@ print_inc_perso(){
 }
 
 print_header(){
-    echo "/*" >> $1
-    echo "**" >> $1
-    echo "**" >> $1
-    echo "**" >> $1
-    echo "**" >> $1
-    echo "**" >> $1
-    echo "*/" >> $1
+    echo "/* " >> $1
+    echo "** $1 for $1 in $PWD " >> $1
+    echo "** " >> $1
+    echo "** Made by $USER" >> $1
+    echo "** Login <$USER>" >> $1
+    echo "** " >> $1
+    echo "** Started tomorrow " >> $1
+    echo "*/ " >> $1
 }
 
 print_start_preprocess(){
